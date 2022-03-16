@@ -92,6 +92,9 @@
 # @param python_dependency_path
 #   Path to where pip can find packages when the variable $install_dependencies_from_filesystem is true
 #
+# @param plugins
+#   Hash of plugins to install in the form of "package_name => pip_requirements_line".
+#
 # @param database_name
 #   Name of the PostgreSQL database. If handle_database is true, then this database
 #   gets created as well. If not, then it is only used by the application, and needs to exist.
@@ -238,6 +241,7 @@ class netbox (
   Boolean $handle_redis = true,
   Boolean $install_dependencies_from_filesystem = false,
   Stdlib::Absolutepath $python_dependency_path = '/srv/python_dependencies',
+  Hash[String, String] $plugins = {},
   Boolean $include_napalm = true,
   Boolean $include_django_storages = true,
   Boolean $include_ldap = true,
@@ -316,6 +320,7 @@ class netbox (
     include_ldap                         => $include_ldap,
     install_dependencies_from_filesystem => $install_dependencies_from_filesystem,
     python_dependency_path               => $python_dependency_path,
+    plugins                              => $plugins,
   }
 
   $redis_options = {
@@ -382,6 +387,7 @@ class netbox (
     short_time_format       => $short_time_format,
     datetime_format         => $datetime_format,
     short_datetime_format   => $short_datetime_format,
+    plugins                 => $plugins,
   }
 
   class {'netbox::service':

@@ -60,6 +60,9 @@
 # @param python_dependency_path
 #   Path to where pip can find packages when the variable $install_dependencies_from_filesystem is true
 #
+# @param plugins
+#   NetBox Plugins to install
+#
 # @example
 #   include netbox::install
 class netbox::install (
@@ -74,6 +77,7 @@ class netbox::install (
   Boolean $include_napalm,
   Boolean $include_django_storages,
   Boolean $include_ldap,
+  Hash[String, String] $plugins,
   Boolean $install_dependencies_from_filesystem,
   Stdlib::Absolutepath $python_dependency_path,
   Enum['tarball', 'git_clone'] $install_method = 'tarball',
@@ -172,6 +176,15 @@ class netbox::install (
     file_line { 'ldap':
       path    => "${software_directory}/local_requirements.txt",
       line    => 'django-auth-ldap',
+      notify  => Exec['install local python requirements'],
+      require => File['local_requirements']
+    }
+  }
+
+  $plugins.each |String $package_name, String $pip_requirements_line| {
+    file_line { $package_name:
+      path    => "${software_directory}/local_requirements.txt",
+      line    => $pip_requirements_line,
       notify  => Exec['install local python requirements'],
       require => File['local_requirements']
     }

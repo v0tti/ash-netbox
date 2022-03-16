@@ -137,6 +137,9 @@
 # Date/time formatting. See the following link for supported formats:
 # https://docs.djangoproject.com/en/stable/ref/templates/builtins/#date
 #
+# @param plugins
+#   NetBox Plugins
+#
 # @example
 #   include netbox::config
 class netbox::config (
@@ -175,6 +178,7 @@ class netbox::config (
   String $short_time_format,
   String $datetime_format,
   String $short_datetime_format,
+  Hash[String, String] $plugins,
 ) {
   $should_create_superuser = false;
   $software_directory = "${install_root}/netbox"
@@ -233,6 +237,7 @@ class netbox::config (
       'short_time_format'       => $short_time_format,
       'datetime_format'         => $datetime_format,
       'short_datetime_format'   => $short_datetime_format,
+      'plugins'                 => $plugins,
     }),
     owner        => $user,
     group        => $group,
